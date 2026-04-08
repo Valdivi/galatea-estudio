@@ -3,38 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galatea Estudio — Panel de Contenido</title>
+    <title>Galatea Estudio — Panel Vacunorte</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
     <style>
       :root { --teal: #1B9EAD; --teal-light: #4FBFCC; --dark: rgb(20, 23, 40); --border: rgba(255, 255, 255, 0.1); }
-      body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: #fff; margin: 0; }
-      .header { padding: 1.5rem 2rem; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(20px); background: rgba(44, 44, 44, 0.3); }
-      .header h1 { font-family: 'Playfair Display', serif; color: var(--teal); font-size: 1.2rem; letter-spacing: 0.15em; text-transform: uppercase; }
-      .container { max-width: 1400px; margin: 2rem auto; padding: 0 2rem; }
-      .month-nav { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; justify-content: center; }
-      .month-nav h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; min-width: 200px; text-align: center; }
-      .btn-galatea { background: var(--teal); color: white; border: none; padding: 10px 25px; border-radius: 50px; cursor: pointer; text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; transition: 0.3s; }
-      .btn-galatea:hover { background: var(--teal-light); transform: scale(1.05); }
-      .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
-      .day-box { background: rgba(255,255,255,0.03); border: 0.5px solid var(--border); border-radius: 16px; padding: 1rem; min-height: 150px; transition: 0.4s; }
-      .day-box:hover { border-color: var(--teal); background: rgba(27, 158, 173, 0.05); }
-      .day-number { font-size: 1.5rem; font-weight: 300; opacity: 0.5; text-align: right; }
-      .idea-tag { font-size: 12px; color: var(--teal); margin-top: 10px; font-weight: 500; }
+      body { 
+        font-family: 'DM Sans', sans-serif; background: var(--dark); color: #fff; margin: 0;
+        background-image: linear-gradient(rgba(27, 158, 173, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(27, 158, 173, 0.05) 1px, transparent 1px);
+        background-size: 50px 50px;
+      }
+      .nav-galatea { 
+        display: flex; justify-content: space-between; align-items: center; 
+        padding: 14px 32px; background: rgba(44,44,44,0.5); backdrop-filter: blur(20px);
+        border-bottom: 0.5px solid var(--border);
+      }
+      .nav-galatea h1 { font-family: 'Playfair Display', serif; color: var(--teal); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.14em; }
+      .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+      
+      .btn-new { 
+        padding: 12px 24px; background: var(--teal); color: #fff; border: none; border-radius: 50px; 
+        cursor: pointer; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      }
+      .btn-new:hover { background: var(--teal-light); box-shadow: 0 0 20px rgba(27,158,173,0.3); }
+
+      .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-top: 30px; }
+      .day-box { 
+        background: rgba(255,255,255,0.03); border: 0.5px solid var(--border); 
+        border-radius: 16px; padding: 16px; min-height: 140px; transition: 0.3s;
+      }
+      .day-box:hover { border-color: var(--teal); transform: translateY(-5px); background: rgba(27,158,173,0.08); }
+      .day-num { font-size: 1.5rem; font-weight: 300; color: #B8C4C8; text-align: right; }
+      .event-tag { font-size: 11px; color: var(--teal); border-left: 2px solid var(--teal); padding-left: 8px; margin-top: 8px; font-weight: 500; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Galatea Estudio</h1>
-        <div id="cliente-nombre">Vacunorte</div>
-    </div>
+    <nav class="nav-galatea">
+      <h1>Galatea Estudio</h1>
+      <button class="btn-new" id="openModal">➕ Nueva Idea</button>
+    </nav>
     <div class="container">
-        <div class="month-nav">
-            <button class="btn-galatea" onclick="changeMonth(-1)">Anterior</button>
-            <h3 id="mes-actual">Abril 2026</h3>
-            <button class="btn-galatea" onclick="changeMonth(1)">Siguiente</button>
-        </div>
-        <div class="days-grid" id="calendario"></div>
+      <h2 style="font-family: 'Playfair Display'; font-size: 2.5rem; text-align: center; color: var(--teal);">Abril 2026</h2>
+      <div class="days-grid" id="grid"></div>
     </div>
-    <script type="module" src="calendario-cliente.js"></script>
+
+    <script type="module">
+      import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+      const supabase = createClient("https://gsxagzjktdovwucbsjho.supabase.co", "sb_publishable_fgcyi7whz-Fmtt1eHXr8mw_WX1lJbOW");
+
+      async function draw() {
+        // Traer eventos de la tabla maestra
+        const { data } = await supabase.from('calendario_maestro').select('*');
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        
+        for (let i = 1; i <= 30; i++) {
+          const date = `2026-04-${String(i).padStart(2, '0')}`;
+          const ev = data?.find(e => e.fecha === date);
+          grid.innerHTML += `
+            <div class="day-box">
+              <div class="day-num">${i}</div>
+              ${ev ? `<div class="event-tag">${ev.conmemoracion}</div>` : ''}
+            </div>`;
+        }
+      }
+      draw();
+    </script>
 </body>
 </html>
