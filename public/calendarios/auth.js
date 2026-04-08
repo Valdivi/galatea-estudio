@@ -3,19 +3,19 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export async function enviarMagicLink(email) {
-  const { error } = await supabase.auth.signInWithOtp({
+// NUEVA FUNCIÓN: Ingreso con contraseña
+export async function loginConPassword(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: email,
-    options: {
-      emailRedirectTo: `${window.location.origin}/calendarios/calendario-cliente.html`,
-    },
+    password: password,
   });
-  
+
   if (error) {
     console.error('Error:', error.message);
-    alert('Error: ' + error.message);
+    alert('Error: Correo o contraseña incorrectos');
   } else {
-    alert('¡Link de acceso enviado a ' + email + '! Revisa tu correo.');
+    // Si todo está bien, lo mandamos al calendario
+    window.location.href = '/calendarios/calendario-cliente.html';
   }
 }
 
