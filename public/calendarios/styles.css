@@ -1,286 +1,334 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f7fa;
-    color: #333;
-  }
-  
-  .header {
-    background: white;
-    padding: 20px;
-    border-bottom: 2px solid #1B9EAD;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .header h1 {
-    color: #1B9EAD;
-    font-size: 24px;
-  }
-  
-  .logout-btn {
-    background: #ff4444;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .logout-btn:hover {
-    background: #cc0000;
-  }
-  
-  .container {
-    max-width: 1400px;
-    margin: 20px auto;
-    padding: 0 20px;
-  }
-  
-  .month-selector {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .month-selector button {
-    background: #1B9EAD;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .month-selector select {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .calendar {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .calendar h2 {
-    margin-bottom: 20px;
-    color: #1B9EAD;
-  }
-  
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-  }
-  
-  .day-box {
-    background: #f9f9f9;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 12px;
-    min-height: 120px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .day-box:hover {
-    border-color: #1B9EAD;
-    box-shadow: 0 4px 12px rgba(27, 158, 173, 0.2);
-  }
-  
-  .day-number {
-    font-weight: bold;
-    color: #1B9EAD;
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-  
-  .day-idea {
-    font-size: 13px;
-    color: #555;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  .state-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .state-badge.por-grabar {
-    background: #ff4444;
-  }
-  
-  .state-badge.edicion {
-    background: #ffbb44;
-  }
-  
-  .state-badge.publicacion {
-    background: #44bb44;
-  }
-  
-  .zona-creativa {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  
-  .zona-creativa h2 {
-    color: #1B9EAD;
-    margin-bottom: 15px;
-  }
-  
-  .tabla {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-  }
-  
-  .tabla thead {
-    background: #f0f0f0;
-  }
-  
-  .tabla th {
-    padding: 12px;
-    text-align: left;
-    font-weight: bold;
-    color: #1B9EAD;
-    border-bottom: 2px solid #1B9EAD;
-  }
-  
-  .tabla td {
-    padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .tabla tbody tr:hover {
-    background: #f9f9f9;
-  }
-  
-  .btn-mover {
-    background: #1B9EAD;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-right: 5px;
-  }
-  
-  .btn-mover:hover {
-    background: #158a96;
-  }
-  
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .modal.active {
-    display: flex;
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    width: 90%;
-  }
-  
-  .modal-content h2 {
-    color: #1B9EAD;
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
-  }
-  
-  .form-group input,
-  .form-group textarea,
-  .form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-family: Arial;
-  }
-  
-  .form-group textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
-  
-  .modal-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    justify-content: flex-end;
-  }
-  
-  .btn-save {
-    background: #1B9EAD;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .btn-save:hover {
-    background: #158a96;
-  }
-  
-  .btn-cancel {
-    background: #ccc;
-    color: #333;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .btn-cancel:hover {
-    background: #999;
-  }
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background-color: #05050b;
+  background-image: 
+    linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  color: #e0eaff;
+}
+
+.header {
+  background: rgba(10, 10, 20, 0.9);
+  padding: 20px;
+  border-bottom: 2px solid #ff007f;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+.header h1 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00f3ff;
+  font-size: 26px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+}
+
+.logout-btn {
+  background: transparent;
+  color: #ff007f;
+  padding: 8px 20px;
+  border: 1px solid #ff007f;
+  border-radius: 0;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.2);
+}
+
+.logout-btn:hover {
+  background: #ff007f;
+  color: #fff;
+  box-shadow: 0 0 15px #ff007f, inset 0 0 20px #ff007f;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.month-selector {
+  background: rgba(15, 15, 25, 0.8);
+  padding: 20px;
+  border: 1px solid #00f3ff;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Esquina Cyberpunk */
+.month-selector::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-top: 3px solid #ff007f;
+  border-left: 3px solid #ff007f;
+}
+
+.month-selector button {
+  background: #00f3ff;
+  color: #05050b;
+  border: none;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+  transition: all 0.3s;
+}
+
+.month-selector button:hover {
+  background: #ff007f;
+  color: white;
+  transform: scale(1.05);
+}
+
+.month-selector h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 22px;
+  color: #fff;
+  text-shadow: 0 0 8px #00f3ff;
+  text-transform: uppercase;
+  min-width: 200px;
+  text-align: center;
+}
+
+.calendar {
+  background: rgba(10, 10, 15, 0.9);
+  padding: 25px;
+  border: 1px solid #333;
+  border-top: 3px solid #00f3ff;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.calendar h2, .zona-creativa h2 {
+  font-family: 'Orbitron', sans-serif;
+  color: #ff007f;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+  display: inline-block;
+  border-bottom: 2px solid #00f3ff;
+  padding-bottom: 5px;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+}
+
+.day-box {
+  background: rgba(20, 20, 30, 0.6);
+  border: 1px solid #2a2a3a;
+  padding: 15px;
+  min-height: 130px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.day-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 2px;
+  background: #00f3ff;
+  transition: left 0.3s ease;
+}
+
+.day-box:hover::before {
+  left: 0;
+}
+
+.day-box:hover {
+  background: rgba(30, 30, 45, 0.9);
+  border-color: #00f3ff;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.day-number {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  color: #334455;
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-align: right;
+}
+
+.day-box:hover .day-number {
+  color: #00f3ff;
+  text-shadow: 0 0 5px #00f3ff;
+}
+
+.day-idea {
+  font-size: 15px;
+  color: #fff;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.state-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #000;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+}
+
+.state-badge.por-grabar { background: #ff003c; color: white; box-shadow: 0 0 10px #ff003c; }
+.state-badge.edicion { background: #ffe600; }
+.state-badge.publicacion { background: #00ff66; }
+
+.zona-creativa {
+  background: rgba(10, 10, 15, 0.9);
+  padding: 25px;
+  border: 1px solid #333;
+  border-left: 4px solid #ff007f;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-size: 15px;
+}
+
+.tabla th {
+  padding: 15px;
+  text-align: left;
+  font-family: 'Orbitron', sans-serif;
+  color: #00f3ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #00f3ff;
+}
+
+.tabla td {
+  padding: 15px;
+  background: rgba(20, 20, 30, 0.6);
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+}
+
+.tabla td:first-child { border-left: 1px solid #222; }
+.tabla td:last-child { border-right: 1px solid #222; }
+
+.tabla tbody tr {
+  transition: all 0.2s ease;
+}
+
+.tabla tbody tr:hover td {
+  background: rgba(30, 30, 45, 0.9);
+  border-color: #ff007f;
+}
+
+.btn-mover {
+  background: transparent;
+  color: #00f3ff;
+  padding: 6px 12px;
+  border: 1px solid #00f3ff;
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-right: 5px;
+  transition: all 0.3s;
+}
+
+.btn-mover:hover {
+  background: #00f3ff;
+  color: #000;
+  box-shadow: 0 0 10px #00f3ff;
+}
+
+/* Modal Cyberpunk */
+.modal-content {
+  background: #0a0a10;
+  border: 2px solid #ff007f;
+  box-shadow: 0 0 30px rgba(255, 0, 127, 0.3);
+  color: #fff;
+}
+
+.modal-content h2 {
+  font-family: 'Orbitron', sans-serif;
+  color: #00f3ff;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+
+.form-group label {
+  color: #ff007f;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.form-group input, .form-group textarea, .form-group select {
+  background: rgba(20, 20, 30, 0.8);
+  border: 1px solid #333;
+  color: #00f3ff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  padding: 12px;
+  transition: border 0.3s;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: #00f3ff;
+  box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1);
+}
+
+.btn-save {
+  background: #ff007f;
+  color: white;
+  border: none;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.5);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 0;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+}
