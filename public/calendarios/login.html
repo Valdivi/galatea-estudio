@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Galatea Studio</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 400px; width: 100%; }
+        h1 { color: #1B9EAD; margin-bottom: 30px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #333; font-weight: bold; }
+        input[type="email"] { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        button { width: 100%; padding: 12px; background: #1B9EAD; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #158a96; }
+        .message { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 5px; text-align: center; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Galatea Studio</h1>
+        <h2 style="text-align: center; color: #666; margin-bottom: 30px; font-size: 18px;">Acceso a Calendarios</h2>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required placeholder="tu@email.com">
+            </div>
+            <button type="submit">Enviar Link de Acceso</button>
+        </form>
+        
+        <div class="message">
+            Te enviaremos un link de acceso a tu correo. No necesitas contraseña.
+        </div>
+    </div>
+
+    <script type="module">
+        import { enviarMagicLink } from './auth.js';
+        
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            await enviarMagicLink(email);
+        });
+    </script>
+</body>
+</html>

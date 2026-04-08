@@ -1,0 +1,286 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f7fa;
+    color: #333;
+  }
+  
+  .header {
+    background: white;
+    padding: 20px;
+    border-bottom: 2px solid #1B9EAD;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .header h1 {
+    color: #1B9EAD;
+    font-size: 24px;
+  }
+  
+  .logout-btn {
+    background: #ff4444;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .logout-btn:hover {
+    background: #cc0000;
+  }
+  
+  .container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+  
+  .month-selector {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .month-selector button {
+    background: #1B9EAD;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .month-selector select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .calendar {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .calendar h2 {
+    margin-bottom: 20px;
+    color: #1B9EAD;
+  }
+  
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  
+  .day-box {
+    background: #f9f9f9;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 120px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .day-box:hover {
+    border-color: #1B9EAD;
+    box-shadow: 0 4px 12px rgba(27, 158, 173, 0.2);
+  }
+  
+  .day-number {
+    font-weight: bold;
+    color: #1B9EAD;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  
+  .day-idea {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  .state-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+  }
+  
+  .state-badge.por-grabar {
+    background: #ff4444;
+  }
+  
+  .state-badge.edicion {
+    background: #ffbb44;
+  }
+  
+  .state-badge.publicacion {
+    background: #44bb44;
+  }
+  
+  .zona-creativa {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .zona-creativa h2 {
+    color: #1B9EAD;
+    margin-bottom: 15px;
+  }
+  
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  
+  .tabla thead {
+    background: #f0f0f0;
+  }
+  
+  .tabla th {
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    color: #1B9EAD;
+    border-bottom: 2px solid #1B9EAD;
+  }
+  
+  .tabla td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .tabla tbody tr:hover {
+    background: #f9f9f9;
+  }
+  
+  .btn-mover {
+    background: #1B9EAD;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-right: 5px;
+  }
+  
+  .btn-mover:hover {
+    background: #158a96;
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal.active {
+    display: flex;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    width: 90%;
+  }
+  
+  .modal-content h2 {
+    color: #1B9EAD;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: Arial;
+  }
+  
+  .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+  
+  .btn-save {
+    background: #1B9EAD;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-save:hover {
+    background: #158a96;
+  }
+  
+  .btn-cancel {
+    background: #ccc;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn-cancel:hover {
+    background: #999;
+  }
