@@ -854,7 +854,7 @@ window._enviarComentario = async function(ideaId){
   const {error} = await sb.from('comentarios').insert({
     idea_id: ideaId, cliente: CLI, autor: 'Cliente', texto
   });
-  if(error){ toast('Error al enviar','#e05555'); return; }
+  if(error){ toast(error.message||error.code||JSON.stringify(error),'#e05555'); return; }
   input.value = '';
   toast('✓ Comentario enviado');
   cargarComentarios(ideaId);
