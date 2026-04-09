@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Galatea — Vacunorte</title>
+  <!-- LOGO: logo en blanco simple.png ubicado en public/calendarios/ -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <style>
@@ -85,8 +86,8 @@
 
     /* CALENDAR */
     .cal-header{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;
-      margin-bottom:10px;font-size:9px;text-transform:uppercase;letter-spacing:.22em;
-      color:var(--teal);opacity:.65;}
+      margin-bottom:10px;font-size:12px;text-transform:uppercase;letter-spacing:.18em;
+      color:var(--teal);opacity:.75;}
     .days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;}
 
     .day-box{background:var(--surface);border:.5px solid var(--border);border-radius:16px;
@@ -94,8 +95,15 @@
     .day-box.empty{background:transparent;border-color:transparent;pointer-events:none;}
     .day-box:not(.empty):hover{border-color:var(--teal-border);background:var(--teal-glow);}
     .day-box.drag-over{border-color:var(--teal);background:rgba(27,158,173,.2);box-shadow:0 0 0 2px var(--teal);}
-    .day-num{font-size:1rem;font-weight:300;color:var(--text-muted);text-align:right;margin-bottom:5px;}
-    .day-box.today .day-num{color:var(--teal);font-weight:600;}
+    .day-num{font-size:1rem;font-weight:400;color:#ffffff;text-align:right;margin-bottom:5px;}
+    [data-theme="light"] .day-num{color:#1a1d2e;}
+    .day-box.today .day-num{color:var(--teal);font-weight:700;}
+
+    /* stats bar */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:28px;}
+    .stat-card{background:var(--surface2);border:1px solid var(--border2);border-radius:14px;padding:16px 18px;}
+    .stat-num{font-family:'Playfair Display',serif;font-size:1.9rem;}
+    .stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--text-muted);margin-top:2px;}
     .day-box.today::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
       background:var(--teal);border-radius:16px 16px 0 0;}
 
@@ -223,6 +231,16 @@
     ::-webkit-scrollbar{width:5px;}
     ::-webkit-scrollbar-thumb{background:var(--teal-border);border-radius:3px;}
 
+    /* COMENTARIOS */
+    .comentario-item{padding:10px 13px;background:var(--surface);border-radius:10px;
+      border:1px solid var(--border);margin-bottom:8px;font-size:12px;line-height:1.6;}
+    .comentario-meta{font-size:9px;color:var(--text-muted);margin-top:4px;letter-spacing:.06em;}
+    .comentario-form{display:flex;gap:8px;margin-top:12px;}
+    .comentario-form input{flex:1;background:var(--surface);border:1px solid var(--border2);
+      border-radius:8px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;
+      font-size:12px;outline:none;transition:border-color .2s;}
+    .comentario-form input:focus{border-color:var(--teal-border);}
+
     @media(max-width:768px){
       .fgrid{grid-template-columns:1fr;}
       .days-grid{gap:6px;}
@@ -234,26 +252,25 @@
 <body>
 
 <nav>
-  <h1>Galatea Estudio</h1>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <img src="logo en blanco simple.png" alt="Galatea" style="height:36px;width:auto;object-fit:contain;">
+  </div>
   <div class="nav-right">
     <span class="nav-client">Vacunorte</span>
-
-    <!-- Redes sociales del cliente -->
     <div id="nav-redes" style="display:flex;gap:6px;align-items:center;"></div>
-
-    <!-- Theme switch -->
     <button class="theme-toggle" id="themeBtn" title="Cambiar tema">
       <span id="themeIcon">🌙</span>
       <div class="tog-track"><div class="tog-thumb"></div></div>
       <span id="themeLabel" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;">Oscuro</span>
     </button>
-
     <button class="btn btn-purple" id="btnOtroEvento">📌 Otro Evento</button>
-    <button class="btn btn-teal"   id="btnNuevaIdea">➕ Nueva Idea</button>
   </div>
 </nav>
 
 <div class="container">
+
+  <!-- STATS -->
+  <div class="stats-row" id="stats-row"></div>
 
   <!-- MONTH NAV -->
   <div class="month-nav">
@@ -301,22 +318,20 @@
     </button>
     <div class="sec-body open" id="bodZona">
       <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px;line-height:1.7;">
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 14px;line-height:1.7;">
         💡 <strong>Arrastra</strong> una idea al calendario para programarla. La Zona Creativa conserva todas las ideas de todos los meses.
       </p>
       <div class="empty-st" id="zc-empty">
         <div style="font-size:2rem;margin-bottom:10px;">💡</div>
-        Sin ideas aún. Usa <strong style="color:var(--teal);">+ Nueva Idea</strong>.
+        No hay ideas en Zona Creativa aún.
       </div>
       <table class="itab" id="tab-zona" style="display:none;">
         <thead><tr>
           <th style="width:26px;"></th>
-          <th>Idea</th><th>Formato</th><th>Pilar</th><th>Estado</th><th>URL</th><th>Acciones</th>
+          <th>Idea</th><th>Formato</th><th>Pilar</th><th>Estado</th><th>Acciones</th>
         </tr></thead>
         <tbody id="tb-zona"></tbody>
       </table>
-      <div style="margin-top:16px;padding-top:13px;border-top:.5px solid var(--border);">
-        <button class="btn btn-ghost btn-sm" id="btnNuevaIdea2">➕ Agregar idea</button>
-      </div>
     </div>
   </div>
 
@@ -477,9 +492,7 @@ const sb = createClient(
 const CLI = "VACUNORTE";
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-const hoyInit = new Date();
-let cy = hoyInit.getFullYear();
-let cm = hoyInit.getMonth() + 1;
+let cy=new Date().getFullYear(), cm=new Date().getMonth()+1;
 let zona=[], eventos=[], otros=[];
 let dragId=null, dropD=null, otroId=null, fichaData=null;
 
@@ -568,7 +581,33 @@ async function cargar(){
   eventos= r2.data||[];
   otros  = r3.data||[];
 
-  rdrCal(); rdrZona(); rdrCreacion();
+  rdrCal(); rdrZona(); rdrCreacion(); rdrStats();
+}
+
+// ── STATS ──
+function rdrStats(){
+  const grabar = eventos.filter(e=>e.estado==='POR GRABAR').length + zona.filter(e=>e.estado==='POR GRABAR').length;
+  const edicion = eventos.filter(e=>e.estado==='EDICIÓN').length + zona.filter(e=>e.estado==='EDICIÓN').length;
+  const publi = eventos.filter(e=>e.estado==='PUBLICACIÓN').length + zona.filter(e=>e.estado==='PUBLICACIÓN').length;
+  const total = eventos.length + otros.length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--teal)">${total}</div>
+      <div class="stat-lbl">Total eventos — ${mesLbl()}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--red-t)">${grabar}</div>
+      <div class="stat-lbl">Por Grabar</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--yel-t)">${edicion}</div>
+      <div class="stat-lbl">En Edición</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--grn-t)">${publi}</div>
+      <div class="stat-lbl">Publicados</div>
+    </div>
+  `;
 }
 
 // ── RENDER CALENDARIO ──
@@ -607,24 +646,11 @@ function rdrCal(){
       box.appendChild(ch);
     });
 
-    box.addEventListener('dragover',e=>{e.preventDefault();box.classList.add('drag-over');});
-    box.addEventListener('dragleave',()=>box.classList.remove('drag-over'));
-    box.addEventListener('drop',e=>{
-      e.preventDefault();box.classList.remove('drag-over');
-      if(!dragId)return;
-      dropD=d;
-      const idea=zona.find(i=>i.id==dragId);
-      if(idea){
-        document.getElementById('cf-nombre').textContent=idea.nombre_idea;
-        document.getElementById('cf-fecha').textContent=`${d} de ${MESES[cm-1]} ${cy}`;
-        open('mConfirmar');
-      }
-    });
     grid.appendChild(box);
   }
 }
 
-// ── RENDER ZONA CREATIVA ──
+// ── RENDER ZONA CREATIVA (solo lectura) ──
 function rdrZona(){
   const tb=document.getElementById('tb-zona'),
         tbl=document.getElementById('tab-zona'),
@@ -635,8 +661,8 @@ function rdrZona(){
   tbl.style.display='table';emp.style.display='none';
 
   tb.innerHTML=zona.map(i=>`
-    <tr class="idea-row" draggable="true" data-id="${i.id}">
-      <td><span class="drag-h">⠿</span></td>
+    <tr data-id="${i.id}">
+      <td><span style="color:var(--text-muted);font-size:13px;">💡</span></td>
       <td>
         <div style="font-weight:500;font-size:13px;">${i.nombre_idea}</div>
         ${i.copy_final?`<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${i.copy_final.substring(0,55)}…</div>`:''}
@@ -644,33 +670,14 @@ function rdrZona(){
       <td>${i.formato?`<span class="b-fmt">${i.formato}</span>`:`<span style="color:var(--text-muted)">—</span>`}</td>
       <td>${i.pilar_contenido?`<span class="b-pilar">${i.pilar_contenido}</span>`:`<span style="color:var(--text-muted)">—</span>`}</td>
       <td>
-        <select class="est-sel ${sCls(i.estado)}" onchange="window._chgEst('${i.id}',this.value,this)">
-          <option value="POR GRABAR"  ${i.estado==='POR GRABAR' ?'selected':''}>🔴 Por Grabar</option>
-          <option value="EDICIÓN"     ${i.estado==='EDICIÓN'    ?'selected':''}>🟡 Edición</option>
-          <option value="PUBLICACIÓN" ${i.estado==='PUBLICACIÓN'?'selected':''}>🟢 Publicación</option>
-        </select>
+        <span style="font-size:10px;padding:4px 10px;border-radius:20px;background:var(--surface2);color:var(--text-sub);">
+          ${eEmoji(i.estado)} ${i.estado||'—'}
+        </span>
       </td>
-      <td>${i.url?`<a href="${i.url}" target="_blank" style="color:var(--teal);font-size:11px;">🔗 Ver</a>`:`<span style="color:var(--text-muted)">—</span>`}</td>
       <td>
-        <div class="act-cell">
-          <button class="btn btn-ghost btn-sm" onclick="window._ficha('${i.id}')">Ficha</button>
-          <button class="btn btn-danger btn-sm" onclick="window._del('${i.id}')">✕</button>
-        </div>
+        <button class="btn btn-ghost btn-sm" onclick="window._ficha('${i.id}')">Ver / Comentar</button>
       </td>
     </tr>`).join('');
-
-  tb.querySelectorAll('.idea-row').forEach(row=>{
-    row.addEventListener('dragstart',()=>{
-      dragId=row.dataset.id;row.classList.add('dragging');
-      const g=document.getElementById('dGhost');
-      g.textContent=(zona.find(i=>i.id==dragId)||{}).nombre_idea||'...';
-      g.style.display='block';
-    });
-    row.addEventListener('dragend',()=>{
-      row.classList.remove('dragging');
-      document.getElementById('dGhost').style.display='none';
-    });
-  });
 }
 
 // ── RENDER CREACIÓN ──
@@ -690,58 +697,11 @@ function rdrCreacion(){
         ${ev.pilar_contenido?`<div style="font-size:10px;color:var(--text-muted);">${ev.pilar_contenido}</div>`:''}</td>
       <td>${ev.formato?`<span class="b-fmt">${ev.formato}</span>`:'—'}</td>
       <td>${ev.pilar_contenido?`<span class="b-pilar">${ev.pilar_contenido}</span>`:'—'}</td>
-      <td>
-        <select class="est-sel ${sCls(ev.estado)}" onchange="window._chgEst('${ev.id}',this.value,this)">
-          <option value="POR GRABAR"  ${ev.estado==='POR GRABAR' ?'selected':''}>🔴 Por Grabar</option>
-          <option value="EDICIÓN"     ${ev.estado==='EDICIÓN'    ?'selected':''}>🟡 Edición</option>
-          <option value="PUBLICACIÓN" ${ev.estado==='PUBLICACIÓN'?'selected':''}>🟢 Publicación</option>
-        </select>
-      </td>
+      <td><span style="font-size:10px;padding:4px 10px;border-radius:20px;background:var(--surface2);color:var(--text-sub);">${eEmoji(ev.estado)} ${ev.estado||''}</span></td>
       <td style="font-size:11px;color:var(--text-sub);">${d} ${MESES[cm-1]}</td>
-      <td><div class="act-cell">
-        <button class="btn btn-ghost btn-sm" onclick="window._ficha('${ev.id}')">Ficha</button>
-        <button class="btn btn-danger btn-sm" onclick="window._unplan('${ev.id}')">↩ Quitar</button>
-      </div></td>
+      <td><button class="btn btn-ghost btn-sm" onclick="window._ficha('${ev.id}')">Ver / Comentar</button></td>
     </tr>`;}).join('');
 }
-
-// drag ghost
-document.addEventListener('dragover',e=>{
-  const g=document.getElementById('dGhost');
-  g.style.left=(e.clientX+14)+'px';g.style.top=(e.clientY-14)+'px';
-});
-
-// ── CONFIRMAR PROGRAMAR ──
-document.getElementById('btnConfirmar').addEventListener('click',async()=>{
-  if(!dragId||!dropD)return;
-  const{error}=await sb.from('zona_creativa').update({fecha_calendario:fStr(cy,cm,dropD),programado:true}).eq('id',dragId);
-  if(error){toast('Error al programar','#e05555');return;}
-  toast(`✓ Programado para ${dropD} de ${MESES[cm-1]}`);
-  close('mConfirmar');dragId=null;dropD=null;cargar();
-});
-
-// ── GUARDAR NUEVA IDEA ──
-document.getElementById('fNuevaIdea').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const btn=document.getElementById('btnSaveIdea');
-  btn.innerHTML='<span class="spin"></span>Guardando...';btn.disabled=true;
-  const fd=new FormData(e.target);
-  const gs=Array.from({length:5},(_,i)=>fd.get('g'+i)||'');
-  const es=Array.from({length:5},(_,i)=>fd.get('e'+i)||'');
-  const{error}=await sb.from('zona_creativa').insert({
-    cliente:CLI,nombre_idea:fd.get('nombre_idea'),
-    formato:fd.get('formato')||null,pilar_contenido:fd.get('pilar_contenido')||null,
-    estado:fd.get('estado')||'POR GRABAR',url:fd.get('url')||null,
-    guion:gs.filter(Boolean).join('\n'),escenas:es.filter(Boolean).join('\n'),
-    ganchos:fd.get('ganchos')||null,galeria_visual:fd.get('galeria_visual')||null,
-    copy_final:fd.get('copy_final')||null,programado:false
-  });
-  btn.innerHTML='Guardar Idea';btn.disabled=false;
-  if(error){toast('Error: '+error.message,'#e05555');return;}
-  toast('✓ Idea guardada');e.target.reset();mkProdRows('pr-nueva');
-  window.clrEF(document.getElementById('est-nueva'));
-  close('mNuevaIdea');cargar();
-});
 
 // ── OTRO EVENTO ──
 document.getElementById('btnOtroEvento').addEventListener('click',()=>{
@@ -787,66 +747,96 @@ document.getElementById('btnDelOtro').addEventListener('click',async()=>{
   toast('Evento eliminado');close('mDetalleOtro');cargar();
 });
 
-// ── FICHA ──
-function abrirFicha(idea){
+// ── FICHA (solo lectura + imágenes + comentarios) ──
+async function abrirFicha(idea){
   fichaData=idea;
   document.getElementById('ficha-titulo').textContent=idea.nombre_idea;
   const gs=idea.guion?idea.guion.split('\n'):[];
   const es=idea.escenas?idea.escenas.split('\n'):[];
-  const v={};
-  for(let i=0;i<5;i++){v['g'+i]=gs[i]||'';v['e'+i]=es[i]||'';}
+
+  // Galería: puede ser JSON array de base64 o texto plano
+  let galImgs = [];
+  if(idea.galeria_visual){
+    try{ galImgs = JSON.parse(idea.galeria_visual); } catch(e){ /* no imgs */ }
+  }
+
+  const galHTML = galImgs.length
+    ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+        ${galImgs.map(src=>`<img src="${src}" style="height:90px;border-radius:8px;object-fit:cover;border:1px solid var(--border2);" onerror="this.style.display='none'">`).join('')}
+       </div>`
+    : `<p style="font-size:11px;color:var(--text-muted);">Sin imágenes adjuntas.</p>`;
 
   document.getElementById('ficha-body').innerHTML=`
-    <div class="fgrid" style="margin-bottom:16px;">
-      <div class="fg"><label>Formato</label>
-        <select data-f="formato" style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;">
-          ${['','Video Profesional','Video Text On Screen','Video Natural','Carrusel','Stories Interacción'].map(f=>`<option ${idea.formato===f?'selected':''}>${f}</option>`).join('')}
-        </select></div>
-      <div class="fg"><label>Estado</label>
-        <select data-f="estado" class="ef ${sCls(idea.estado)}" onchange="clrEF(this)" style="border-radius:10px;padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;">
-          <option value="POR GRABAR"  ${idea.estado==='POR GRABAR' ?'selected':''}>🔴 Por Grabar</option>
-          <option value="EDICIÓN"     ${idea.estado==='EDICIÓN'    ?'selected':''}>🟡 Edición</option>
-          <option value="PUBLICACIÓN" ${idea.estado==='PUBLICACIÓN'?'selected':''}>🟢 Publicación</option>
-        </select></div>
-      <div class="fg full"><label>Pilar</label>
-        <select data-f="pilar_contenido" style="background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;">
-          ${['','Educación / Aporta Valor','Prueba / Validación','Identificación / Conciencia'].map(p=>`<option ${idea.pilar_contenido===p?'selected':''}>${p}</option>`).join('')}
-        </select></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+      ${idea.formato?`<span class="b-fmt">${idea.formato}</span>`:''}
+      ${idea.pilar_contenido?`<span class="b-pilar">${idea.pilar_contenido}</span>`:''}
+      <span style="font-size:10px;padding:4px 10px;border-radius:20px;background:var(--surface2);color:var(--text-sub);">${eEmoji(idea.estado)} ${idea.estado||''}</span>
     </div>
+    ${idea.url?`<div style="margin-bottom:14px;"><a href="${idea.url}" target="_blank" style="color:var(--teal);font-size:12px;">🔗 Ver referencia</a></div>`:''}
+
     <div class="slbl">Tabla de Producción</div>
-    <table class="ptab">
+    <table class="ptab" style="margin-bottom:16px;">
       <thead><tr><th style="width:68px;">Clip</th><th>Guion</th><th>Escenas</th></tr></thead>
       <tbody>${Array.from({length:5},(_,i)=>`
         <tr>
           <td><div class="clip-lbl">Clip ${i+1}</div></td>
-          <td><input type="text" data-f="g${i}" value="${v['g'+i].replace(/"/g,'&quot;')}" placeholder="Guion..."></td>
-          <td><input type="text" data-f="e${i}" value="${v['e'+i].replace(/"/g,'&quot;')}" placeholder="Descripción...">
-            <div class="esc-hint">¿Qué escena hay que grabar?</div></td>
+          <td style="font-size:12px;color:var(--text-sub);padding:7px 9px;">${gs[i]||'<span style="color:var(--text-muted)">—</span>'}</td>
+          <td style="font-size:12px;color:var(--text-sub);padding:7px 9px;">${es[i]||'<span style="color:var(--text-muted)">—</span>'}</td>
         </tr>`).join('')}
       </tbody>
     </table>
-    <div class="slbl" style="margin-top:16px;">Ideas de Ganchos</div>
-    <textarea data-f="ganchos" rows="4" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;">${idea.ganchos||''}</textarea>
-    <div class="slbl">Galería Visual (URLs)</div>
-    <textarea data-f="galeria_visual" rows="3" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;">${idea.galeria_visual||''}</textarea>
-    <div class="slbl">Copy Final</div>
-    <textarea data-f="copy_final" rows="4" style="width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;">${idea.copy_final||''}</textarea>`;
+
+    ${idea.ganchos?`<div class="slbl">Ideas de Ganchos</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.7;color:var(--text-sub);margin-bottom:14px;white-space:pre-wrap;">${idea.ganchos}</div>`:''}
+
+    <div class="slbl">Galería Visual</div>
+    <div style="margin-bottom:16px;">${galHTML}</div>
+
+    ${idea.copy_final?`<div class="slbl">Copy Final</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.7;color:var(--text-sub);margin-bottom:16px;white-space:pre-wrap;">${idea.copy_final}</div>`:''}
+
+    <div class="slbl">Observaciones del Cliente</div>
+    <div id="comentarios-list" style="margin-bottom:8px;"><div style="font-size:11px;color:var(--text-muted);padding:8px 0;">Cargando...</div></div>
+    <div class="comentario-form">
+      <input type="text" id="nuevo-comentario" placeholder="Escribe tu observación o comentario...">
+      <button class="btn btn-teal btn-sm" onclick="window._enviarComentario('${idea.id}')">Enviar</button>
+    </div>
+  `;
   open('mFicha');
+  cargarComentarios(idea.id);
 }
 
-document.getElementById('btnSaveFicha').addEventListener('click',async()=>{
-  if(!fichaData)return;
-  const b=document.getElementById('ficha-body');
-  const g=f=>b.querySelector(`[data-f="${f}"]`)?.value||'';
-  const{error}=await sb.from('zona_creativa').update({
-    formato:g('formato')||null,estado:g('estado'),pilar_contenido:g('pilar_contenido')||null,
-    guion:Array.from({length:5},(_,i)=>g('g'+i)).filter(Boolean).join('\n'),
-    escenas:Array.from({length:5},(_,i)=>g('e'+i)).filter(Boolean).join('\n'),
-    ganchos:g('ganchos')||null,galeria_visual:g('galeria_visual')||null,copy_final:g('copy_final')||null
-  }).eq('id',fichaData.id);
-  if(error){toast('Error','#e05555');return;}
-  toast('✓ Ficha actualizada');close('mFicha');cargar();
-});
+async function cargarComentarios(ideaId){
+  const {data} = await sb.from('comentarios').select('*').eq('idea_id',ideaId).order('created_at',{ascending:true});
+  const list = document.getElementById('comentarios-list');
+  if(!list) return;
+  const items = data||[];
+  if(!items.length){
+    list.innerHTML='<div style="font-size:11px;color:var(--text-muted);padding:6px 0;">Sé el primero en comentar.</div>';
+    return;
+  }
+  list.innerHTML = items.map(c=>`
+    <div class="comentario-item">
+      <div>${c.texto}</div>
+      <div class="comentario-meta">— ${c.autor||'Cliente'} · ${new Date(c.created_at).toLocaleDateString('es',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+    </div>`).join('');
+}
+
+window._enviarComentario = async function(ideaId){
+  const input = document.getElementById('nuevo-comentario');
+  const texto = input?.value?.trim();
+  if(!texto) return;
+  const {error} = await sb.from('comentarios').insert({
+    idea_id: ideaId, cliente: CLI, autor: 'Cliente', texto
+  });
+  if(error){ toast('Error al enviar','#e05555'); return; }
+  input.value = '';
+  toast('✓ Comentario enviado');
+  cargarComentarios(ideaId);
+};
+
+// cliente no puede editar fichas
+document.getElementById('btnSaveFicha').style.display='none';
 
 // ── GLOBALS ──
 window._chgEst=async(id,val,sel)=>{
@@ -876,19 +866,6 @@ window._unplan=async id=>{
   });
 });
 
-document.getElementById('btnNuevaIdea').addEventListener('click',()=>open('mNuevaIdea'));
-document.getElementById('btnNuevaIdea2').addEventListener('click',()=>open('mNuevaIdea'));
-
-// ── NOTA SQL (ejecutar UNA VEZ en Supabase) ──
-// CREATE TABLE IF NOT EXISTS otros_eventos (
-//   id bigserial primary key,
-//   cliente text, actividad text,
-//   estado_otro text default 'POR EJECUTAR',
-//   fecha_evento date, descripcion text,
-//   creado_en timestamptz default now()
-// );
-
-
 // ── REDES SOCIALES ──
 async function cargarRedes(){
   const {data} = await sb.from('redes_sociales').select('*').eq('cliente',CLI).limit(1);
@@ -896,9 +873,9 @@ async function cargarRedes(){
   const container = document.getElementById('nav-redes');
   container.innerHTML = '';
   const links = [
-    {key:'facebook', label:'Facebook', color:'#1877F2', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'},
-    {key:'instagram', label:'Instagram', color:'#E1306C', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>'},
-    {key:'tiktok', label:'TikTok', color:'#ffffff', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.73a4.85 4.85 0 01-1.01-.04z"/></svg>'},
+    {key:'facebook_url', label:'Facebook', color:'#1877F2', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'},
+    {key:'instagram_url', label:'Instagram', color:'#E1306C', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>'},
+    {key:'tiktok_url', label:'TikTok', color:'#ffffff', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.73a4.85 4.85 0 01-1.01-.04z"/></svg>'},
   ];
   links.forEach(({key,label,color,svg})=>{
     if(!redes[key]) return;
