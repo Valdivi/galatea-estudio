@@ -247,9 +247,38 @@
       .day-box{min-height:75px;padding:8px;}
       nav{padding:11px 14px;}
     }
+
+    /* LOGIN */
+    #login-screen{position:fixed;inset:0;background:var(--bg);z-index:9999;
+      display:flex;align-items:center;justify-content:center;
+      background-image:linear-gradient(var(--grid-ln) 1px,transparent 1px),linear-gradient(90deg,var(--grid-ln) 1px,transparent 1px);
+      background-size:50px 50px;}
+    .login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;
+      padding:42px 40px;width:100%;max-width:380px;text-align:center;}
+    .login-box img{height:44px;margin-bottom:24px;}
+    .login-box h2{font-family:'Playfair Display',serif;color:var(--teal);font-size:1.4rem;margin-bottom:6px;}
+    .login-box p{font-size:12px;color:var(--text-muted);margin-bottom:28px;}
+    .login-field{width:100%;background:var(--surface);border:1px solid var(--border2);
+      border-radius:10px;padding:11px 14px;color:var(--text);font-family:'DM Sans',sans-serif;
+      font-size:13px;outline:none;margin-bottom:12px;transition:border-color .2s;box-sizing:border-box;}
+    .login-field:focus{border-color:var(--teal-border);}
+    .login-err{font-size:11px;color:var(--red-t);margin-bottom:10px;min-height:16px;}
   </style>
 </head>
 <body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <img src="logo en blanco simple.png" alt="Galatea">
+    <h2>Bienvenida</h2>
+    <p>Accede a tu calendario de contenido</p>
+    <input class="login-field" type="text" id="lg-user" placeholder="Usuario o correo">
+    <input class="login-field" type="password" id="lg-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')window._doLogin()">
+    <div class="login-err" id="lg-err"></div>
+    <button class="btn btn-teal" style="width:100%;padding:11px;" onclick="window._doLogin()">Ingresar</button>
+  </div>
+</div>
 
 <nav>
   <div style="display:flex;align-items:center;gap:12px;">
@@ -980,6 +1009,28 @@ document.addEventListener('paste', e => {
     }
   }
 });
+
+// ── LOGIN ──
+const USUARIOS = [
+  {user:'sarahi',   pass:'Galatea2026'},
+  {user:'diego',    pass:'Galatea2026'},
+  {user:'vacunorte@hotmail.com', pass:'12345'},
+  {user:'vacunorte', pass:'12345'},
+];
+window._doLogin = () => {
+  const u = document.getElementById('lg-user').value.trim().toLowerCase();
+  const p = document.getElementById('lg-pass').value;
+  const ok = USUARIOS.find(x => x.user.toLowerCase() === u && x.pass === p);
+  if(ok){
+    sessionStorage.setItem('gc_auth','1');
+    document.getElementById('login-screen').style.display='none';
+  } else {
+    document.getElementById('lg-err').textContent='Usuario o contraseña incorrectos.';
+  }
+};
+if(sessionStorage.getItem('gc_auth')==='1'){
+  document.getElementById('login-screen').style.display='none';
+}
 
 cargar();
 cargarRedes();
