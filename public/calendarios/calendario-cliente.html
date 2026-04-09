@@ -238,6 +238,9 @@
   <div class="nav-right">
     <span class="nav-client">Vacunorte</span>
 
+    <!-- Redes sociales del cliente -->
+    <div id="nav-redes" style="display:flex;gap:6px;align-items:center;"></div>
+
     <!-- Theme switch -->
     <button class="theme-toggle" id="themeBtn" title="Cambiar tema">
       <span id="themeIcon">🌙</span>
@@ -320,11 +323,24 @@
   <!-- CREADORES -->
   <div class="section-wrapper">
     <button class="section-toggle" id="togCreadores">
-      <span class="tog-left"><span>🔥</span><span>Creadores que nos Inspiran</span></span>
+      <span class="tog-left">
+        <span>🔥</span><span>Creadores que nos Inspiran</span>
+        <span class="cnt-badge" id="ins-count">0</span>
+      </span>
       <span class="arrow">▼</span>
     </button>
     <div class="sec-body" id="bodCreadores">
-      <div class="empty-st"><div style="font-size:2rem;margin-bottom:10px;">🎬</div>Próximamente: referencias de TikTok, Instagram y YouTube.</div>
+      <p style="font-size:11px;color:var(--text-muted);margin:0 0 16px;line-height:1.7;">
+        Referencias de contenido: URLs, imágenes y notas de creadores que te inspiran.
+      </p>
+      <div class="empty-st" id="ins-empty">
+        <div style="font-size:2rem;margin-bottom:10px;">🎬</div>
+        Agrega tu primera referencia de contenido.
+      </div>
+      <div id="ins-grid" style="display:none;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:16px;"></div>
+      <div style="margin-top:16px;padding-top:13px;border-top:.5px solid var(--border);">
+        <button class="btn btn-ghost btn-sm" id="btnNuevaInsp">➕ Agregar referencia</button>
+      </div>
     </div>
   </div>
 
@@ -870,7 +886,108 @@ document.getElementById('btnNuevaIdea2').addEventListener('click',()=>open('mNue
 //   creado_en timestamptz default now()
 // );
 
+
+// ── REDES SOCIALES ──
+async function cargarRedes(){
+  const {data} = await sb.from('redes_sociales').select('*').eq('cliente',CLI).limit(1);
+  const redes = data && data[0] ? data[0] : {};
+  const container = document.getElementById('nav-redes');
+  container.innerHTML = '';
+  const links = [
+    {key:'facebook', label:'Facebook', color:'#1877F2', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>'},
+    {key:'instagram', label:'Instagram', color:'#E1306C', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>'},
+    {key:'tiktok', label:'TikTok', color:'#ffffff', svg:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.73a4.85 4.85 0 01-1.01-.04z"/></svg>'},
+  ];
+  links.forEach(({key,label,color,svg})=>{
+    if(!redes[key]) return;
+    const a=document.createElement('a');
+    a.href=redes[key]; a.target='_blank'; a.title=label;
+    a.style.cssText=`display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:${color};transition:all 0.2s;text-decoration:none;`;
+    a.innerHTML=svg;
+    a.onmouseenter=()=>{a.style.background='rgba(255,255,255,0.18)';a.style.borderColor=color;};
+    a.onmouseleave=()=>{a.style.background='rgba(255,255,255,0.07)';a.style.borderColor='rgba(255,255,255,0.12)';};
+    container.appendChild(a);
+  });
+}
+
+// ── INSPIRACION ──
+async function cargarInsp(){
+  const {data}=await sb.from('inspiracion').select('*').eq('cliente',CLI).order('created_at',{ascending:false});
+  const items=data||[];
+  document.getElementById('ins-count').textContent=items.length;
+  const grid=document.getElementById('ins-grid');
+  const empty=document.getElementById('ins-empty');
+  if(!items.length){grid.style.display='none';empty.style.display='block';return;}
+  empty.style.display='none'; grid.style.display='grid';
+  grid.innerHTML=items.map(item=>`
+    <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:14px;overflow:hidden;transition:border-color .2s;" onmouseenter="this.style.borderColor='var(--teal-border)'" onmouseleave="this.style.borderColor='var(--border2)'">
+      ${item.imagen_url?`<img src="${item.imagen_url}" style="width:100%;height:130px;object-fit:cover;" onerror="this.style.display='none'">`:
+        `<div style="width:100%;height:70px;background:var(--teal-glow);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🎬</div>`}
+      <div style="padding:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px;">
+          <div style="font-weight:500;font-size:13px;">${item.nombre}</div>
+          ${item.red_social?`<span style="font-size:9px;padding:2px 8px;border-radius:20px;background:var(--teal-glow);color:var(--teal);border:1px solid var(--teal-border);white-space:nowrap;">${item.red_social}</span>`:''}
+        </div>
+        ${item.notas?`<p style="font-size:11px;color:var(--text-sub);line-height:1.5;margin-bottom:8px;">${item.notas}</p>`:''}
+        <div style="display:flex;gap:8px;align-items:center;">
+          ${item.url?`<a href="${item.url}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none;">🔗 Ver perfil</a>`:''}
+          <button onclick="window._delInsp('${item.id}')" style="margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;padding:2px 6px;" title="Eliminar">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('btnNuevaInsp').addEventListener('click',()=>open('mNuevaInsp'));
+document.getElementById('fNuevaInsp').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const btn=document.getElementById('btnSaveInsp');
+  btn.innerHTML='<span class="spin"></span>Guardando...';btn.disabled=true;
+  const fd=new FormData(e.target);
+  const{error}=await sb.from('inspiracion').insert({
+    cliente:CLI, nombre:fd.get('nombre'),
+    red_social:fd.get('red_social')||null, url:fd.get('url'),
+    imagen_url:fd.get('imagen_url')||null, notas:fd.get('notas')||null,
+  });
+  btn.innerHTML='Guardar';btn.disabled=false;
+  if(error){toast('Error: '+error.message,'#e05555');return;}
+  toast('✓ Referencia guardada');e.target.reset();close('mNuevaInsp');cargarInsp();
+});
+window._delInsp=async id=>{
+  if(!confirm('¿Eliminar esta referencia?'))return;
+  const{error}=await sb.from('inspiracion').delete().eq('id',id);
+  if(error){toast('Error','#e05555');return;}
+  toast('Referencia eliminada');cargarInsp();
+};
+
 cargar();
+cargarRedes();
+cargarInsp();
 </script>
+
+<!-- ═══ MODAL NUEVA INSPIRACION ═══ -->
+<div class="modal" id="mNuevaInsp">
+  <div class="modal-content mc-md">
+    <button class="modal-close" data-close="mNuevaInsp">✕</button>
+    <h2 class="modal-title">🔥 Nueva Referencia</h2>
+    <form id="fNuevaInsp">
+      <div class="fgrid">
+        <div class="fg full"><label>Nombre / Creador *</label><input type="text" name="nombre" required placeholder="Ej: @drcristinamd, Healthline..."></div>
+        <div class="fg"><label>Red Social</label>
+          <select name="red_social">
+            <option value="">— Seleccionar —</option>
+            <option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Facebook</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="fg"><label>URL *</label><input type="url" name="url" required placeholder="https://..."></div>
+        <div class="fg full"><label>URL de Imagen (thumbnail)</label><input type="url" name="imagen_url" placeholder="https://imagen.com/thumb.jpg"></div>
+        <div class="fg full"><label>Notas</label><textarea name="notas" style="min-height:70px;" placeholder="¿Qué me inspira? ¿Qué tipo de contenido hace?"></textarea></div>
+      </div>
+      <div class="mfooter">
+        <button type="button" class="btn btn-ghost" data-close="mNuevaInsp">Cancelar</button>
+        <button type="submit" class="btn btn-teal" id="btnSaveInsp">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
 </html>
