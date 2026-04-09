@@ -541,7 +541,7 @@ async function cargar(){
   const ini=fStr(cy,cm,1), fin=fStr(cy,cm,dim(cy,cm));
 
   const [r1,r2,r3]=await Promise.all([
-    sb.from('zona_creativa').select('*').eq('cliente',CLI).or('programado.eq.false,programado.is.null').order('creado_en',{ascending:false}),
+    sb.from('zona_creativa').select('*').eq('cliente',CLI).neq('programado',true).order('created_at',{ascending:false}),
     sb.from('zona_creativa').select('*').eq('cliente',CLI).eq('programado',true).gte('fecha_calendario',ini).lte('fecha_calendario',fin).order('fecha_calendario'),
     sb.from('otros_eventos').select('*').eq('cliente',CLI).gte('fecha_evento',ini).lte('fecha_evento',fin).order('fecha_evento')
   ]);
@@ -626,7 +626,7 @@ function rdrZona(){
       <td>${i.formato?`<span class="b-fmt">${i.formato}</span>`:`<span style="color:var(--text-muted)">—</span>`}</td>
       <td>${i.pilar_contenido?`<span class="b-pilar">${i.pilar_contenido}</span>`:`<span style="color:var(--text-muted)">—</span>`}</td>
       <td>
-        <select class="est-sel ${sCls(i.estado)}" onchange="window._chgEst(${i.id},this.value,this)">
+        <select class="est-sel ${sCls(i.estado)}" onchange="window._chgEst('${i.id}',this.value,this)">
           <option value="POR GRABAR"  ${i.estado==='POR GRABAR' ?'selected':''}>🔴 Por Grabar</option>
           <option value="EDICIÓN"     ${i.estado==='EDICIÓN'    ?'selected':''}>🟡 Edición</option>
           <option value="PUBLICACIÓN" ${i.estado==='PUBLICACIÓN'?'selected':''}>🟢 Publicación</option>
@@ -635,8 +635,8 @@ function rdrZona(){
       <td>${i.url?`<a href="${i.url}" target="_blank" style="color:var(--teal);font-size:11px;">🔗 Ver</a>`:`<span style="color:var(--text-muted)">—</span>`}</td>
       <td>
         <div class="act-cell">
-          <button class="btn btn-ghost btn-sm" onclick="window._ficha(${i.id})">Ficha</button>
-          <button class="btn btn-danger btn-sm" onclick="window._del(${i.id})">✕</button>
+          <button class="btn btn-ghost btn-sm" onclick="window._ficha('${i.id}')">Ficha</button>
+          <button class="btn btn-danger btn-sm" onclick="window._del('${i.id}')">✕</button>
         </div>
       </td>
     </tr>`).join('');
@@ -673,7 +673,7 @@ function rdrCreacion(){
       <td>${ev.formato?`<span class="b-fmt">${ev.formato}</span>`:'—'}</td>
       <td>${ev.pilar_contenido?`<span class="b-pilar">${ev.pilar_contenido}</span>`:'—'}</td>
       <td>
-        <select class="est-sel ${sCls(ev.estado)}" onchange="window._chgEst(${ev.id},this.value,this)">
+        <select class="est-sel ${sCls(ev.estado)}" onchange="window._chgEst('${ev.id}',this.value,this)">
           <option value="POR GRABAR"  ${ev.estado==='POR GRABAR' ?'selected':''}>🔴 Por Grabar</option>
           <option value="EDICIÓN"     ${ev.estado==='EDICIÓN'    ?'selected':''}>🟡 Edición</option>
           <option value="PUBLICACIÓN" ${ev.estado==='PUBLICACIÓN'?'selected':''}>🟢 Publicación</option>
@@ -681,8 +681,8 @@ function rdrCreacion(){
       </td>
       <td style="font-size:11px;color:var(--text-sub);">${d} ${MESES[cm-1]}</td>
       <td><div class="act-cell">
-        <button class="btn btn-ghost btn-sm" onclick="window._ficha(${ev.id})">Ficha</button>
-        <button class="btn btn-danger btn-sm" onclick="window._unplan(${ev.id})">↩ Quitar</button>
+        <button class="btn btn-ghost btn-sm" onclick="window._ficha('${ev.id}')">Ficha</button>
+        <button class="btn btn-danger btn-sm" onclick="window._unplan('${ev.id}')">↩ Quitar</button>
       </div></td>
     </tr>`;}).join('');
 }
