@@ -379,7 +379,7 @@
             <option value="PUBLICACIÓN">🟢 Publicación</option>
           </select>
         </div>
-        <div class="fg full"><label>URL de referencia</label><input type="url" name="url" placeholder="https://..."></div>
+        <div class="fg full"><label>URL de referencia</label><input type="text" name="url" placeholder="https://..."></div>
       </div>
       <div class="slbl">Tabla de Producción</div>
       <table class="ptab"><thead><tr><th style="width:68px;">Clip</th><th>Guion</th><th>Escenas</th></tr></thead>
@@ -477,7 +477,9 @@ const sb = createClient(
 const CLI = "VACUNORTE";
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-let cy=2026, cm=4;
+const hoyInit = new Date();
+let cy = hoyInit.getFullYear();
+let cm = hoyInit.getMonth() + 1;
 let zona=[], eventos=[], otros=[];
 let dragId=null, dropD=null, otroId=null, fichaData=null;
 
@@ -946,11 +948,16 @@ document.getElementById('fNuevaInsp').addEventListener('submit',async e=>{
   const{error}=await sb.from('inspiracion').insert({
     cliente:CLI, nombre:fd.get('nombre'),
     red_social:fd.get('red_social')||null, url:fd.get('url'),
-    imagen_url:fd.get('imagen_url')||null, notas:fd.get('notas')||null,
+    imagen_url:fd.get('imagen_data')||fd.get('imagen_url')||null, notas:fd.get('notas')||null,
   });
   btn.innerHTML='Guardar';btn.disabled=false;
   if(error){toast('Error: '+error.message,'#e05555');return;}
-  toast('✓ Referencia guardada');e.target.reset();close('mNuevaInsp');cargarInsp();
+  toast('✓ Referencia guardada');e.target.reset();
+  document.getElementById('img-preview').style.display='none';
+  document.getElementById('img-drop-text').textContent='📎 Haz clic para subir o arrastra una imagen aquí';
+  document.getElementById('img-drop-zone').style.borderColor='var(--border2)';
+  document.getElementById('img-data-input').value='';
+  close('mNuevaInsp');cargarInsp();
 });
 window._delInsp=async id=>{
   if(!confirm('¿Eliminar esta referencia?'))return;
@@ -958,6 +965,48 @@ window._delInsp=async id=>{
   if(error){toast('Error','#e05555');return;}
   toast('Referencia eliminada');cargarInsp();
 };
+
+
+// ── IMAGE UPLOAD FOR INSPIRACION ──
+window._handleImgFile = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result;
+    document.getElementById('img-data-input').value = base64;
+    document.getElementById('img-url-input').value = '';
+    document.getElementById('img-preview-el').src = base64;
+    document.getElementById('img-preview').style.display = 'block';
+    document.getElementById('img-drop-text').textContent = '✓ Imagen lista';
+    document.getElementById('img-drop-zone').style.borderColor = 'var(--teal)';
+  };
+  reader.readAsDataURL(file);
+};
+
+window._handleImgDrop = function(e) {
+  e.preventDefault();
+  document.getElementById('img-drop-zone').style.borderColor = 'var(--border2)';
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith('image/')) return;
+  const fakeInput = { files: [file] };
+  window._handleImgFile(fakeInput);
+};
+
+// Allow pasting image with Ctrl+V when modal is open
+document.addEventListener('paste', e => {
+  const modal = document.getElementById('mNuevaInsp');
+  if (!modal.classList.contains('open')) return;
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      window._handleImgFile({ files: [file] });
+      break;
+    }
+  }
+});
 
 cargar();
 cargarRedes();
@@ -978,8 +1027,23 @@ cargarInsp();
             <option>TikTok</option><option>Instagram</option><option>YouTube</option><option>Facebook</option><option>Otro</option>
           </select>
         </div>
-        <div class="fg"><label>URL *</label><input type="url" name="url" required placeholder="https://..."></div>
-        <div class="fg full"><label>URL de Imagen (thumbnail)</label><input type="url" name="imagen_url" placeholder="https://imagen.com/thumb.jpg"></div>
+        <div class="fg"><label>URL del perfil</label><input type="text" name="url" placeholder="https://tiktok.com/@..."></div>
+        <div class="fg full">
+          <label>Imagen (pega o sube)</label>
+          <div id="img-drop-zone" style="border:2px dashed var(--border2);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;font-size:12px;color:var(--text-muted);" 
+               onclick="document.getElementById('img-file-input').click()"
+               ondragover="event.preventDefault();this.style.borderColor='var(--teal)'"
+               ondragleave="this.style.borderColor='var(--border2)'"
+               ondrop="window._handleImgDrop(event)">
+            <div id="img-preview" style="display:none;margin-bottom:8px;">
+              <img id="img-preview-el" style="max-height:120px;max-width:100%;border-radius:8px;object-fit:cover;">
+            </div>
+            <div id="img-drop-text">📎 Haz clic para subir o arrastra una imagen aquí</div>
+            <input type="file" id="img-file-input" accept="image/*" style="display:none;" onchange="window._handleImgFile(this)">
+          </div>
+          <input type="hidden" name="imagen_data" id="img-data-input">
+          <input type="hidden" name="imagen_url" id="img-url-input">
+        </div>
         <div class="fg full"><label>Notas</label><textarea name="notas" style="min-height:70px;" placeholder="¿Qué me inspira? ¿Qué tipo de contenido hace?"></textarea></div>
       </div>
       <div class="mfooter">
