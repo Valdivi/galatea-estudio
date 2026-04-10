@@ -615,9 +615,11 @@ async function cargar(){
 
 // ── STATS ──
 function rdrStats(){
+  const isEd=e=>e.estado==='EDICIÓN'||e.estado==='EDICION';
+  const isPub=e=>e.estado==='PUBLICACIÓN'||e.estado==='PUBLICACION';
   const grabar = eventos.filter(e=>e.estado==='POR GRABAR').length + zona.filter(e=>e.estado==='POR GRABAR').length;
-  const edicion = eventos.filter(e=>e.estado==='EDICIÓN').length + zona.filter(e=>e.estado==='EDICIÓN').length;
-  const publi = eventos.filter(e=>e.estado==='PUBLICACIÓN').length + zona.filter(e=>e.estado==='PUBLICACIÓN').length;
+  const edicion = eventos.filter(isEd).length + zona.filter(isEd).length;
+  const publi = eventos.filter(isPub).length + zona.filter(isPub).length;
   const total = eventos.length + otros.length;
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card">
@@ -779,10 +781,16 @@ async function abrirFicha(idea){
   const gs=idea.guion?idea.guion.split('\n'):[];
   const es=idea.escenas?idea.escenas.split('\n'):[];
 
-  // Galería: puede ser JSON array de base64 o texto plano
+  // Galería: leer de imagenes_json (base64 guardado por maestro)
   let galImgs = [];
-  if(idea.galeria_visual){
-    try{ galImgs = JSON.parse(idea.galeria_visual); } catch(e){ /* no imgs */ }
+  if(idea.imagenes_json){
+    try{ galImgs = JSON.parse(idea.imagenes_json); } catch(e){ /* no imgs */ }
+  }
+  // fallback a galeria_visual si hay URLs de texto
+  if(!galImgs.length && idea.galeria_visual){
+    try{ galImgs = JSON.parse(idea.galeria_visual); } catch(e){
+      galImgs = idea.galeria_visual.split('\n').filter(Boolean);
+    }
   }
 
   const galHTML = galImgs.length
@@ -813,6 +821,9 @@ async function abrirFicha(idea){
 
     ${idea.ganchos?`<div class="slbl">Ideas de Ganchos</div>
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.7;color:var(--text-sub);margin-bottom:14px;white-space:pre-wrap;">${idea.ganchos}</div>`:''}
+
+    ${idea.otros_detalles?`<div class="slbl">Otros Detalles</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.7;color:var(--text-sub);margin-bottom:14px;white-space:pre-wrap;">${idea.otros_detalles}</div>`:''}
 
     <div class="slbl">Galería Visual</div>
     <div style="margin-bottom:16px;">${galHTML}</div>
@@ -854,7 +865,7 @@ window._enviarComentario = async function(ideaId){
   const {error} = await sb.from('comentarios').insert({
     idea_id: ideaId, cliente: CLI, autor: 'Cliente', texto
   });
-  if(error){ toast(error.message||error.code||JSON.stringify(error),'#e05555'); return; }
+  if(error){ toast('Error al enviar','#e05555'); return; }
   input.value = '';
   toast('✓ Comentario enviado');
   cargarComentarios(ideaId);
